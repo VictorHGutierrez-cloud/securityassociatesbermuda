@@ -75,16 +75,13 @@ Isto cria a pasta `dist/` — é o que sobe para o GitHub Pages.
 
 Repositório: [VictorHGutierrez-cloud/securityassociatesbermuda](https://github.com/VictorHGutierrez-cloud/securityassociatesbermuda)
 
-**URL do site (depois do primeiro deploy):**  
+**URL do site:**  
 https://victorhgutierrez-cloud.github.io/securityassociatesbermuda/
 
-Cada push na branch `main` dispara o workflow **Deploy to GitHub Pages** (`.github/workflows/deploy-pages.yml`).
-
-### Ativar Pages uma vez (se o Actions falhar na 1ª vez)
-
-1. Abre o repo no GitHub → **Settings** → **Pages**
-2. Em **Build and deployment** → **Source**, escolhe **GitHub Actions**
-3. Volta a **Actions** → corre o workflow **Deploy to GitHub Pages** (botão Run workflow) se precisar
+Como funciona:
+1. Fazes push para a branch `main`
+2. O workflow **Deploy to GitHub Pages** faz `npm run build` e publica a pasta `dist` na branch `gh-pages`
+3. O GitHub Pages serve a branch `gh-pages`
 
 ### Build local com o mesmo base path do Pages
 
