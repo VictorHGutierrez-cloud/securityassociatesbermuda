@@ -80,12 +80,10 @@ a {
   min-width: 0;
 }
 
-.nav-factorial {
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  font-size: 1.05rem;
-  color: var(--fx-radical);
-  text-transform: lowercase;
+.nav-factorial-logo {
+  height: 28px;
+  width: auto;
+  display: block;
 }
 
 .nav-divider {
@@ -142,6 +140,17 @@ a {
   margin-bottom: 40px;
   position: relative;
   overflow: hidden;
+}
+
+.hero-factorial-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
+  /* logo is Radical Red — invert to white on the red hero */
+  filter: brightness(0) invert(1);
 }
 
 .hero::after {
@@ -649,6 +658,13 @@ a {
   text-align: center;
 }
 
+.cta-factorial-logo {
+  height: 32px;
+  width: auto;
+  margin: 0 auto 18px;
+  display: block;
+}
+
 .cta h2 {
   font-weight: 800;
   font-size: clamp(1.5rem, 3vw, 2rem);
@@ -702,11 +718,15 @@ a {
   text-align: center;
   font-size: 0.82rem;
   color: var(--fx-ink-soft);
+  display: grid;
+  gap: 10px;
+  justify-items: center;
 }
 
-.footer strong {
-  color: var(--fx-radical);
-  text-transform: lowercase;
+.footer-factorial-logo {
+  height: 24px;
+  width: auto;
+  display: block;
 }
 
 .breakdown {

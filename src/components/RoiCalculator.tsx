@@ -37,13 +37,13 @@ export function RoiCalculator() {
   );
 
   return (
-    <div className="calc-shell" id="roi">
+    <div className="calc-shell">
       <div className="calc-top">
         <div>
           <h3 style={{ margin: "0 0 6px" }}>Interactive ROI calculator</h3>
           <p style={{ margin: 0, color: "var(--fx-ink-soft)", fontSize: "0.92rem" }}>
-            Move the sliders. Assumptions are conservative and editable with your
-            CFO — hours were not quantified on the call.
+            Move the sliders. Assumptions are conservative — hours were not
+            quantified on the call, so you can tune them here.
           </p>
         </div>
         <label className={`toggle${blackFriday ? " on" : ""}`}>
@@ -89,8 +89,7 @@ export function RoiCalculator() {
             onChange={(e) => setHourly(Number(e.target.value))}
           />
           <div className="hint">
-            Blended office rate (HR / Ops / Compliance) — assumption; edit with
-            Finance
+            Blended office rate (HR / Ops / Compliance) — edit to match your cost
           </div>
         </div>
 

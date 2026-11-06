@@ -18,11 +18,15 @@ export default function App() {
     <div className="page">
       <nav className="nav">
         <div className="nav-brand">
-          <span className="nav-factorial">Factorial</span>
+          <img
+            className="nav-factorial-logo"
+            src={CLIENT.factorialLogoPath}
+            alt="Factorial"
+          />
           <span className="nav-divider" aria-hidden="true" />
           <span className="nav-client">
             <img src={CLIENT.logoPath} alt="" />
-            Proposal for {CLIENT.name}
+            Prepared for {CLIENT.name}
           </span>
         </div>
         <div className="nav-links">
@@ -36,16 +40,21 @@ export default function App() {
       </nav>
 
       <header className="hero">
-        <div className="hero-kicker">Commercial ROI proposal</div>
-        <h1>Close the people-ops gaps holding your HR team back</h1>
+        <img
+          className="hero-factorial-logo"
+          src={CLIENT.factorialLogoPath}
+          alt="Factorial"
+        />
+        <div className="hero-kicker">Investment & ROI proposal</div>
+        <h1>One platform to retire the paperwork chase</h1>
         <p className="hero-lead">
-          Factorial replaces filing-cabinet chase with one workforce platform —
-          documents, onboarding, time, training, and performance — designed for
-          how your team already works with ~{CLIENT.headcount} people in{" "}
-          {CLIENT.market}.
+          Based on what your team shared: documents and filing cabinets are the
+          bottleneck — while time already runs in TCP. Factorial connects
+          documents, onboarding, time, training, and performance for ~{CLIENT.headcount}{" "}
+          people in {CLIENT.market}.
         </p>
         <div className="hero-meta">
-          <span className="chip client">Prepared for {CLIENT.name}</span>
+          <span className="chip client">{CLIENT.name}</span>
           <span className="chip">~{CLIENT.headcount} employees</span>
           <span className="chip">{CLIENT.market}</span>
           <span className="chip">Black Friday −30%</span>
@@ -175,13 +184,13 @@ export default function App() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" id="roi">
         <div className="section-head">
-          <h2>ROI you can defend with Finance</h2>
+          <h2>Return on investment</h2>
           <p>
             List price <strong>USD 2,000 / month</strong>. Toggle Black Friday for{" "}
             <strong>−30% → USD 1,400 / month</strong>. Hours and hourly cost are
-            assumptions — adjust them live with your CFO.
+            conservative assumptions — adjust them to match your reality.
           </p>
         </div>
         <RoiCalculator />
@@ -234,7 +243,7 @@ export default function App() {
       <section className="section" id="next">
         <div className="section-head">
           <h2>Suggested next steps</h2>
-          <p>A clear path from this proposal to a CFO decision.</p>
+          <p>A straightforward path from this page to a decision.</p>
         </div>
         <ol className="steps">
           {NEXT_STEPS.map((step) => (
@@ -244,24 +253,36 @@ export default function App() {
       </section>
 
       <section className="cta" id="cta">
-        <h2>Ready for the CFO conversation</h2>
+        <img
+          className="cta-factorial-logo"
+          src={CLIENT.factorialLogoPath}
+          alt="Factorial"
+        />
+        <h2>Ready when you are</h2>
         <p>
-          Adjust the calculator, print to PDF (Ctrl+P), and walk Finance through
-          list vs Black Friday payback.
+          Stress-test the numbers above, compare list vs Black Friday, and tell
+          us which path you want to move forward with.
         </p>
         <div className="cta-actions">
           <a className="btn btn-primary" href="#roi">
-            Open ROI calculator
+            Review the ROI numbers
           </a>
           <a className="btn btn-ghost" href="#solution">
-            Review Factorial solution
+            Review the solution
           </a>
         </div>
       </section>
 
       <footer className="footer">
-        <strong>Factorial</strong> commercial proposal prepared for{" "}
-        {CLIENT.legalName} · {CLIENT.market} · ~{CLIENT.headcount} employees
+        <img
+          className="footer-factorial-logo"
+          src={CLIENT.factorialLogoPath}
+          alt="Factorial"
+        />
+        <div>
+          Proposal for {CLIENT.legalName} · {CLIENT.market} · ~{CLIENT.headcount}{" "}
+          employees
+        </div>
       </footer>
     </div>
   );

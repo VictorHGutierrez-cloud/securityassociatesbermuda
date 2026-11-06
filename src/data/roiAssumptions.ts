@@ -8,6 +8,7 @@ export const CLIENT = {
   currency: "USD",
   website: "https://www.sabermuda.com/",
   logoPath: `${import.meta.env.BASE_URL}sa-logo-square.png`,
+  factorialLogoPath: `${import.meta.env.BASE_URL}factorial-logo.png`,
 } as const;
 
 export const PRICING = {
@@ -183,9 +184,9 @@ export const OBJECTIONS = [
       "Keep what works, or consolidate later. The ROI case is documents, onboarding chase, training evidence, and performance — the gaps that are still paper today.",
   },
   {
-    concern: "CFO still needs to approve",
+    concern: "We need budget certainty before we move",
     answer:
-      "This page is Finance-ready: list price, Black Friday −30%, and a live payback calculator you can stress-test together.",
+      "List price and Black Friday (−30%) are on this page. Use the calculator to stress-test hours and payback with your own assumptions — then lock the commercial path you prefer.",
   },
   {
     concern: "Change management",
@@ -195,8 +196,8 @@ export const OBJECTIONS = [
 ] as const;
 
 export const NEXT_STEPS = [
-  "Share this Factorial proposal and short employee-app videos with HR, Operations, and Finance.",
-  "Validate the hour assumptions in the ROI calculator with the team that lives the document chase.",
-  "Return with a decision path for the CFO (list vs Black Friday).",
-  "If green light: kickoff Documents-first, then time and training.",
+  "Align internally on list vs Black Friday using the calculator on this page.",
+  "Validate the hour assumptions with the team that lives the document chase.",
+  "Watch the short employee-app videos so Operations can confirm field adoption.",
+  "If you green-light: we kick off Documents-first, then time and training.",
 ] as const;
