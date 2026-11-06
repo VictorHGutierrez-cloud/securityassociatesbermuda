@@ -33,8 +33,7 @@ export default function App() {
           <a href="#needs">Needs</a>
           <a href="#stack">Today</a>
           <a href="#solution">Solution</a>
-          <a href="#roi">ROI</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#roi">Investment</a>
           <a href="#next">Next</a>
         </div>
       </nav>
@@ -186,40 +185,16 @@ export default function App() {
 
       <section className="section" id="roi">
         <div className="section-head">
-          <h2>Return on investment</h2>
+          <h2>Investment &amp; ROI</h2>
           <p>
-            List price <strong>USD 2,000 / month</strong>. Toggle Black Friday for{" "}
-            <strong>−30% → USD 1,400 / month</strong>. Hours and hourly cost are
-            conservative assumptions — adjust them to match your reality.
+            Default package: <strong>Consulting PRO Enterprise</strong> +{" "}
+            <strong>LMS</strong> · {CLIENT.headcount} seats →{" "}
+            <strong>$1,800 / month</strong> list (
+            <strong>$1,260</strong> with Black Friday −30%). Change seats or
+            add-ons below — ROI recalculates live.
           </p>
         </div>
         <RoiCalculator />
-      </section>
-
-      <section className="section" id="pricing">
-        <div className="section-head">
-          <h2>Investment</h2>
-          <p>
-            Transparent pricing for ~{CLIENT.headcount} employees. Black Friday is
-            part of this commercial package.
-          </p>
-        </div>
-        <div className="price-strip">
-          <div className="price-card">
-            <div className="eyebrow">Standard</div>
-            <p className="amount">$2,000</p>
-            <p className="sub">per month · $24,000 / year</p>
-          </div>
-          <div className="price-card promo">
-            <div className="eyebrow">Black Friday offer</div>
-            <p className="amount">$1,400</p>
-            <p className="sub">
-              per month (−30%) · $16,800 / year
-              <br />
-              Saves $7,200 every year vs list
-            </p>
-          </div>
-        </div>
       </section>
 
       <section className="section" id="objections">

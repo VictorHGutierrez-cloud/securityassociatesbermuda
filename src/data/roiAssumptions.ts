@@ -11,8 +11,10 @@ export const CLIENT = {
   factorialLogoPath: `${import.meta.env.BASE_URL}factorial-logo.png`,
 } as const;
 
+/** @deprecated Prefer pricingCatalog + live quote. Kept for copy defaults. */
 export const PRICING = {
-  listMonthlyUsd: 2000,
+  /** Consulting PRO Ent ($7.4) + LMS ($1.6) × 200 seats */
+  listMonthlyUsd: 1800,
   blackFridayDiscountPct: 30,
 } as const;
 

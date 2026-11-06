@@ -1,10 +1,12 @@
-import { PRICING } from "../data/roiAssumptions";
+import { BLACK_FRIDAY_PCT } from "../data/pricingCatalog";
 
 export type RoiInputs = {
   hoursSavedPerMonth: number;
   hourlyCostUsd: number;
   blackFridayOn: boolean;
   implementationOneShotUsd: number;
+  /** Dynamic software list price from the package builder */
+  listMonthlyUsd: number;
 };
 
 export type RoiResult = {
@@ -22,16 +24,10 @@ export type RoiResult = {
   paybackMonths: number | null;
 };
 
-export function monthlyPrice(blackFridayOn: boolean): number {
-  const list = PRICING.listMonthlyUsd;
-  if (!blackFridayOn) return list;
-  return list * (1 - PRICING.blackFridayDiscountPct / 100);
-}
-
 export function calculateRoi(input: RoiInputs): RoiResult {
-  const listMonthly = PRICING.listMonthlyUsd;
-  const promoMonthly = monthlyPrice(true);
-  const monthlyCost = monthlyPrice(input.blackFridayOn);
+  const listMonthly = Math.max(0, input.listMonthlyUsd);
+  const promoMonthly = listMonthly * (1 - BLACK_FRIDAY_PCT / 100);
+  const monthlyCost = input.blackFridayOn ? promoMonthly : listMonthly;
   const annualSoftware = monthlyCost * 12;
   const annualCost = annualSoftware + Math.max(0, input.implementationOneShotUsd);
   const benefitMonthly = input.hoursSavedPerMonth * input.hourlyCostUsd;
@@ -47,7 +43,7 @@ export function calculateRoi(input: RoiInputs): RoiResult {
     promoMonthly,
     monthlyCost,
     annualCost,
-    discountPct: input.blackFridayOn ? PRICING.blackFridayDiscountPct : 0,
+    discountPct: input.blackFridayOn ? BLACK_FRIDAY_PCT : 0,
     annualSavingsVsList: listMonthly * 12 - promoMonthly * 12,
     benefitMonthly,
     benefitAnnual,
@@ -64,6 +60,15 @@ export function formatUsd(value: number, digits = 0): string {
     currency: "USD",
     maximumFractionDigits: digits,
     minimumFractionDigits: digits,
+  }).format(value);
+}
+
+export function formatUsdPrecise(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
   }).format(value);
 }
 

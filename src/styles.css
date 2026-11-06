@@ -483,6 +483,127 @@ a {
   box-shadow: var(--shadow);
 }
 
+.package-block {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.package-locked {
+  background: var(--fx-pink-wash);
+  border: 1px solid rgba(255, 53, 93, 0.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.package-locked-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+}
+
+.package-rate {
+  margin-left: auto;
+  font-weight: 800;
+  color: var(--fx-radical);
+}
+
+.package-includes {
+  margin: 10px 0 0;
+  font-size: 0.84rem;
+  color: var(--fx-ink-soft);
+}
+
+.seat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.seat-input-row input {
+  width: 96px;
+  padding: 6px 8px;
+  border: 1px solid var(--fx-line);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.lms-fieldset,
+.addon-fieldset {
+  border: 1px solid var(--fx-line);
+  border-radius: 12px;
+  padding: 12px 14px 14px;
+  margin: 0;
+}
+
+.lms-fieldset legend,
+.addon-fieldset legend {
+  padding: 0 6px;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.lms-options,
+.addon-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.addon-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+  .addon-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.choice-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--fx-line);
+  border-radius: 10px;
+  cursor: pointer;
+  background: var(--fx-paper);
+}
+
+.choice-card.on,
+.choice-card:has(input:checked) {
+  border-color: rgba(255, 53, 93, 0.45);
+  background: var(--fx-pink-wash);
+}
+
+.choice-card input {
+  margin-top: 3px;
+  accent-color: var(--fx-radical);
+}
+
+.choice-card strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.choice-card small {
+  display: block;
+  color: var(--fx-ink-soft);
+  font-size: 0.78rem;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+.calc-divider {
+  border: none;
+  border-top: 1px solid var(--fx-line);
+  margin: 28px 0 20px;
+}
+
 .calc-top {
   display: flex;
   flex-wrap: wrap;
