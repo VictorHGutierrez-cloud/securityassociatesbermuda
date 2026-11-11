@@ -150,8 +150,10 @@ export default function App() {
             Default package: <strong>Consulting PRO Enterprise</strong> +{" "}
             <strong>LMS</strong> · {CLIENT.headcount} seats →{" "}
             <strong>$1,800 / month</strong> list (
-            <strong>$1,260</strong> with Black Friday −30%). Change seats or
-            add-ons below — ROI recalculates live.
+            <strong>$1,260</strong> with Black Friday −30%). ROI is built from{" "}
+            <strong>recoverable HR/Ops hours</strong> (chase, rework, onboarding,
+            training admin, paper) plus print/storage — pick a scenario or tune
+            each line.
           </p>
         </div>
         <RoiCalculator />

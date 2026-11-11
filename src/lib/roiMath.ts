@@ -1,12 +1,16 @@
 import { BLACK_FRIDAY_PCT } from "../data/pricingCatalog";
 
 export type RoiInputs = {
-  hoursSavedPerMonth: number;
-  hourlyCostUsd: number;
+  /** Total recoverable value per month (labor + hard costs) */
+  benefitMonthlyUsd: number;
   blackFridayOn: boolean;
   implementationOneShotUsd: number;
   /** Dynamic software list price from the package builder */
   listMonthlyUsd: number;
+  /** For display only */
+  hoursEquivalent?: number;
+  laborBenefitMonthly?: number;
+  hardCostBenefitMonthly?: number;
 };
 
 export type RoiResult = {
@@ -30,7 +34,7 @@ export function calculateRoi(input: RoiInputs): RoiResult {
   const monthlyCost = input.blackFridayOn ? promoMonthly : listMonthly;
   const annualSoftware = monthlyCost * 12;
   const annualCost = annualSoftware + Math.max(0, input.implementationOneShotUsd);
-  const benefitMonthly = input.hoursSavedPerMonth * input.hourlyCostUsd;
+  const benefitMonthly = Math.max(0, input.benefitMonthlyUsd);
   const benefitAnnual = benefitMonthly * 12;
   const netMonthly = benefitMonthly - monthlyCost;
   const netAnnual = benefitAnnual - annualCost;

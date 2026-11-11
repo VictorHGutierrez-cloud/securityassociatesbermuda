@@ -20,34 +20,10 @@ export const PRICING = {
 
 export const DEFAULT_ASSUMPTIONS = {
   headcount: 200,
-  hoursSavedPerMonth: 50,
   hourlyCostUsd: 28,
   blackFridayOn: true,
   implementationOneShotUsd: 0,
 } as const;
-
-export const HOUR_BREAKDOWN = [
-  {
-    process: "Document chase & filing cabinets",
-    hours: 22,
-    help: "Cloud docs, e-sign, incomplete filters, bulk reminders",
-  },
-  {
-    process: "Letters / templates / bulk distribution",
-    hours: 8,
-    help: "Document templates with employee variables; bulk send",
-  },
-  {
-    process: "Performance appraisals (paper)",
-    hours: 10,
-    help: "Digital review cycles + automatic reminders",
-  },
-  {
-    process: "RUSO / compliance training tracking",
-    hours: 10,
-    help: "LMS courses, knowledge tests, completion & certificates",
-  },
-] as const;
 
 export const PAINS = [
   {

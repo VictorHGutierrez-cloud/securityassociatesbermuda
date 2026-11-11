@@ -11,7 +11,18 @@ import {
   type AddonId,
   type LmsOption,
 } from "../data/pricingCatalog";
-import { DEFAULT_ASSUMPTIONS, HOUR_BREAKDOWN } from "../data/roiAssumptions";
+import { DEFAULT_ASSUMPTIONS } from "../data/roiAssumptions";
+import {
+  DEFAULT_SCENARIO_ID,
+  ROI_SCENARIOS,
+  WASTE_DRIVERS,
+  calculateWasteTotals,
+  scenarioById,
+  wasteContextLine,
+  type DriverValues,
+  type RoiScenarioId,
+  type WasteDriverId,
+} from "../data/roiWasteModel";
 import { calculateQuote } from "../lib/pricingMath";
 import {
   calculateRoi,
@@ -21,16 +32,23 @@ import {
   formatUsdPrecise,
 } from "../lib/roiMath";
 
+function cloneValues(v: DriverValues): DriverValues {
+  return JSON.parse(JSON.stringify(v)) as DriverValues;
+}
+
 export function RoiCalculator() {
+  const [scenarioId, setScenarioId] = useState<RoiScenarioId>(DEFAULT_SCENARIO_ID);
+  const [customized, setCustomized] = useState(false);
+  const [driverValues, setDriverValues] = useState<DriverValues>(
+    () => cloneValues(scenarioById(DEFAULT_SCENARIO_ID).values),
+  );
+  const [hourly, setHourly] = useState<number>(
+    scenarioById(DEFAULT_SCENARIO_ID).hourlyCostUsd,
+  );
+
   const [seats, setSeats] = useState<number>(DEFAULT_SEATS);
   const [lms, setLms] = useState<LmsOption>(DEFAULT_LMS);
   const [addons, setAddons] = useState<AddonId[]>(DEFAULT_ADDONS);
-  const [hours, setHours] = useState<number>(
-    DEFAULT_ASSUMPTIONS.hoursSavedPerMonth,
-  );
-  const [hourly, setHourly] = useState<number>(
-    DEFAULT_ASSUMPTIONS.hourlyCostUsd,
-  );
   const [blackFriday, setBlackFriday] = useState<boolean>(
     DEFAULT_ASSUMPTIONS.blackFridayOn,
   );
@@ -49,17 +67,43 @@ export function RoiCalculator() {
     [seats, lms, addons, blackFriday],
   );
 
+  const waste = useMemo(
+    () => calculateWasteTotals(driverValues, hourly),
+    [driverValues, hourly],
+  );
+
   const result = useMemo(
     () =>
       calculateRoi({
-        hoursSavedPerMonth: hours,
-        hourlyCostUsd: hourly,
+        benefitMonthlyUsd: waste.benefitMonthly,
         blackFridayOn: blackFriday,
         implementationOneShotUsd: impl,
         listMonthlyUsd: quote.listMonthly,
+        hoursEquivalent: waste.totalHours,
+        laborBenefitMonthly: waste.laborUsd,
+        hardCostBenefitMonthly: waste.hardCostUsd,
       }),
-    [hours, hourly, blackFriday, impl, quote.listMonthly],
+    [waste, blackFriday, impl, quote.listMonthly],
   );
+
+  function applyScenario(id: RoiScenarioId) {
+    const sc = scenarioById(id);
+    setScenarioId(id);
+    setCustomized(false);
+    setDriverValues(cloneValues(sc.values));
+    setHourly(sc.hourlyCostUsd);
+  }
+
+  function patchDriver(
+    id: WasteDriverId,
+    patch: Partial<{ hours: number; costUsd: number; enabled: boolean }>,
+  ) {
+    setCustomized(true);
+    setDriverValues((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], ...patch },
+    }));
+  }
 
   function toggleAddon(id: AddonId) {
     setAddons((prev) =>
@@ -67,15 +111,16 @@ export function RoiCalculator() {
     );
   }
 
+  const activeScenario = ROI_SCENARIOS.find((s) => s.id === scenarioId);
+
   return (
     <div className="calc-shell">
       <div className="calc-top">
         <div>
-          <h3 style={{ margin: "0 0 6px" }}>Package & ROI calculator</h3>
+          <h3 style={{ margin: "0 0 6px" }}>Package &amp; ROI calculator</h3>
           <p style={{ margin: 0, color: "var(--fx-ink-soft)", fontSize: "0.92rem" }}>
-            Enterprise Monthly only. Consulting PRO is required. Core and
-            Recruitment are inside the bundle — tune seats, LMS, and optional
-            add-ons; ROI updates automatically.
+            Enterprise Monthly only. Tune seats and LMS, then pick a waste scenario
+            or adjust each line — ROI uses labor hours + print/storage costs.
           </p>
         </div>
         <label className={`toggle${blackFriday ? " on" : ""}`}>
@@ -239,52 +284,225 @@ export function RoiCalculator() {
 
       <hr className="calc-divider" />
 
-      <h3 style={{ margin: "0 0 12px" }}>ROI assumptions</h3>
-      <div className="controls">
-        <div className="control">
-          <label>
-            <span>Hours recovered / month</span>
-            <span>{hours} h</span>
-          </label>
-          <input
-            type="range"
-            min={20}
-            max={100}
-            step={1}
-            value={hours}
-            onChange={(e) => setHours(Number(e.target.value))}
-          />
+      <div className="waste-head">
+        <div>
+          <h3 style={{ margin: "0 0 6px" }}>Where HR time and money leak today</h3>
+          <p className="waste-context">{wasteContextLine()}</p>
         </div>
+        <div className="scenario-row" role="group" aria-label="ROI scenarios">
+          {ROI_SCENARIOS.map((sc) => (
+            <button
+              key={sc.id}
+              type="button"
+              className={`scenario-chip${
+                !customized && scenarioId === sc.id ? " is-active" : ""
+              }`}
+              onClick={() => applyScenario(sc.id)}
+            >
+              {sc.label}
+            </button>
+          ))}
+          {customized ? (
+            <span className="scenario-custom">Custom mix</span>
+          ) : null}
+        </div>
+      </div>
+      {activeScenario && !customized ? (
+        <p className="waste-scenario-desc">{activeScenario.description}</p>
+      ) : null}
 
-        <div className="control">
-          <label>
-            <span>Blended office cost / hour (USD)</span>
-            <span>{formatUsd(hourly)}</span>
-          </label>
-          <input
-            type="range"
-            min={12}
-            max={40}
-            step={1}
-            value={hourly}
-            onChange={(e) => setHourly(Number(e.target.value))}
-          />
+      <div className="control" style={{ marginBottom: 16 }}>
+        <label>
+          <span>Blended HR / Ops / Compliance cost per hour (USD)</span>
+          <span>{formatUsd(hourly)}</span>
+        </label>
+        <input
+          type="range"
+          min={18}
+          max={45}
+          step={1}
+          value={hourly}
+          onChange={(e) => {
+            setCustomized(true);
+            setHourly(Number(e.target.value));
+          }}
+        />
+        <div className="hint">
+          Loaded cost (salary + overhead), not field officer wage.
         </div>
+      </div>
 
-        <div className="control">
-          <label>
-            <span>One-shot implementation (USD)</span>
-            <span>{formatUsd(impl)}</span>
-          </label>
-          <input
-            type="range"
-            min={0}
-            max={10000}
-            step={500}
-            value={impl}
-            onChange={(e) => setImpl(Number(e.target.value))}
-          />
+      <div className="waste-drivers">
+        {WASTE_DRIVERS.map((def) => {
+          const row = driverValues[def.id];
+          const showCost =
+            def.kind === "labor_and_cost" || def.kind === "cost";
+          return (
+            <article
+              key={def.id}
+              className={`waste-driver${row.enabled ? "" : " is-off"}`}
+            >
+              <header className="waste-driver__head">
+                <label className="waste-driver__toggle">
+                  <input
+                    type="checkbox"
+                    checked={row.enabled}
+                    onChange={(e) =>
+                      patchDriver(def.id, { enabled: e.target.checked })
+                    }
+                  />
+                  <strong>{def.label}</strong>
+                </label>
+                <span className="waste-driver__total">
+                  {formatUsd(
+                    (row.enabled ? row.hours : 0) * hourly +
+                      (row.enabled ? row.costUsd : 0),
+                  )}
+                  /mo
+                </span>
+              </header>
+              <p className="waste-driver__why">{def.rationale}</p>
+              {row.enabled ? (
+                <div className="waste-driver__sliders">
+                  {def.kind !== "cost" ? (
+                    <div className="control compact">
+                      <label>
+                        <span>Hours / month</span>
+                        <span>{row.hours} h</span>
+                      </label>
+                      <input
+                        type="range"
+                        min={def.hoursMin}
+                        max={def.hoursMax}
+                        step={def.hoursStep}
+                        value={row.hours}
+                        onChange={(e) =>
+                          patchDriver(def.id, {
+                            hours: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </div>
+                  ) : null}
+                  {showCost ? (
+                    <div className="control compact">
+                      <label>
+                        <span>Print / storage / supplies (USD/mo)</span>
+                        <span>{formatUsd(row.costUsd)}</span>
+                      </label>
+                      <input
+                        type="range"
+                        min={def.costMin}
+                        max={def.costMax}
+                        step={20}
+                        value={row.costUsd}
+                        onChange={(e) =>
+                          patchDriver(def.id, {
+                            costUsd: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+              <p className="waste-driver__fx">
+                <strong>Factorial:</strong> {def.factorialHelp}
+              </p>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="waste-summary">
+        <div>
+          <span>Admin time recovered</span>
+          <strong>{waste.totalHours} h/mo</strong>
+          <small>≈ {waste.fteEquivalent.toFixed(2)} FTE (160 h)</small>
         </div>
+        <div>
+          <span>Labor value</span>
+          <strong>{formatUsd(waste.laborUsd)}/mo</strong>
+        </div>
+        <div>
+          <span>Hard costs avoided</span>
+          <strong>{formatUsd(waste.hardCostUsd)}/mo</strong>
+        </div>
+        <div className="waste-summary__total">
+          <span>Total recoverable</span>
+          <strong>{formatUsd(waste.benefitMonthly)}/mo</strong>
+          <small>{formatUsd(waste.benefitMonthly * 12)}/year</small>
+        </div>
+      </div>
+
+      <PaybackMetrics impl={impl} setImpl={setImpl} result={result} />
+
+      <div className="note">
+        <strong>Active scenario:</strong>{" "}
+        {customized ? "Custom" : activeScenario?.label ?? "—"}
+        {" · "}
+        {quote.seats} seats ·{" "}
+        {blackFriday
+          ? `promo ${formatUsdPrecise(result.monthlyCost)}/mo software`
+          : `list ${formatUsdPrecise(result.monthlyCost)}/mo software`}
+        {" · "}
+        recoverable {formatUsdPrecise(waste.benefitMonthly)}/mo vs cost{" "}
+        {formatUsdPrecise(result.monthlyCost)}/mo · net year 1{" "}
+        {formatUsdPrecise(result.netAnnual)}
+      </div>
+
+      <table className="breakdown">
+        <thead>
+          <tr>
+            <th>Waste line</th>
+            <th>Hours</th>
+            <th>Hard $</th>
+            <th>Monthly value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {waste.lines
+            .filter((l) => l.lineTotal > 0)
+            .map((line) => (
+              <tr key={line.id}>
+                <td>{line.label}</td>
+                <td>{line.hours > 0 ? `${line.hours} h` : "—"}</td>
+                <td>{line.costUsd > 0 ? formatUsd(line.costUsd) : "—"}</td>
+                <td>{formatUsd(line.lineTotal)}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function PaybackMetrics({
+  impl,
+  setImpl,
+  result,
+}: {
+  impl: number;
+  setImpl: (n: number) => void;
+  result: ReturnType<typeof calculateRoi>;
+}) {
+  return (
+    <>
+      <h3 style={{ margin: "24px 0 12px" }}>Payback vs package</h3>
+      <div className="control" style={{ marginBottom: 16 }}>
+        <label>
+          <span>One-shot implementation (USD)</span>
+          <span>{formatUsd(impl)}</span>
+        </label>
+        <input
+          type="range"
+          min={0}
+          max={10000}
+          step={500}
+          value={impl}
+          onChange={(e) => setImpl(Number(e.target.value))}
+        />
+        <div className="hint">Leave at $0 if implementation is included in the deal.</div>
       </div>
 
       <div className="metrics">
@@ -293,7 +511,7 @@ export function RoiCalculator() {
           <div className="value">{formatUsdPrecise(result.monthlyCost)}</div>
         </div>
         <div className="metric">
-          <div className="label">Benefit / month</div>
+          <div className="label">Recoverable / month</div>
           <div className="value">{formatUsd(result.benefitMonthly)}</div>
         </div>
         <div className="metric highlight">
@@ -307,38 +525,6 @@ export function RoiCalculator() {
           </div>
         </div>
       </div>
-
-      <div className="note">
-        <strong>Active scenario:</strong>{" "}
-        {quote.seats} seats · Consulting PRO Enterprise
-        {lms !== "none" ? ` + ${LMS_OPTIONS.find((o) => o.id === lms)?.label}` : ""}
-        {addons.length ? ` + ${addons.length} add-on(s)` : ""}
-        {" · "}
-        {blackFriday
-          ? `promo ${formatUsdPrecise(result.monthlyCost)}/mo`
-          : `list ${formatUsdPrecise(result.monthlyCost)}/mo`}
-        {" · "}
-        net year 1 {formatUsdPrecise(result.netAnnual)}
-      </div>
-
-      <table className="breakdown">
-        <thead>
-          <tr>
-            <th>Assumed process</th>
-            <th>Hours / mo</th>
-            <th>How Factorial helps</th>
-          </tr>
-        </thead>
-        <tbody>
-          {HOUR_BREAKDOWN.map((row) => (
-            <tr key={row.process}>
-              <td>{row.process}</td>
-              <td>{row.hours}</td>
-              <td>{row.help}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    </>
   );
 }
