@@ -64,5 +64,5 @@ export const NAV_SECTIONS = [
   { id: "stack", label: "Today" },
   { id: "solution", label: "Solution" },
   { id: "roi", label: "Investment" },
-  { id: "next", label: "Next" },
+  { id: "objections", label: "FAQ" },
 ] as const;

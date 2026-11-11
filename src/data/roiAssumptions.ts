@@ -196,10 +196,3 @@ export const OBJECTIONS = [
       "Phased rollout: Documents & onboarding first → time → training / performance. Office team first, then officers.",
   },
 ] as const;
-
-export const NEXT_STEPS = [
-  "Align internally on list vs Black Friday using the calculator on this page.",
-  "Validate the hour assumptions with the team that lives the document chase.",
-  "Watch the short employee-app videos so Operations can confirm field adoption.",
-  "If you green-light: we kick off Documents-first, then time and training.",
-] as const;

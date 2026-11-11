@@ -1,7 +1,6 @@
 import {
   CLIENT,
   EXTRA_VALUE,
-  NEXT_STEPS,
   OBJECTIONS,
   PAINS,
   SOLUTION_PILLARS,
@@ -174,18 +173,6 @@ export default function App() {
             </article>
           ))}
         </div>
-      </section>
-
-      <section className="section" id="next">
-        <div className="section-head">
-          <h2>Suggested next steps</h2>
-          <p>A straightforward path from this page to a decision.</p>
-        </div>
-        <ol className="steps">
-          {NEXT_STEPS.map((step) => (
-            <li key={step}>{step}</li>
-          ))}
-        </ol>
       </section>
 
       <footer className="footer">
