@@ -864,6 +864,10 @@ a {
 }
 
 .metric .label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -888,11 +892,55 @@ a {
   color: rgba(255, 255, 255, 0.8);
 }
 
+.price-active {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  border: 2px solid var(--fx-line);
+  background: var(--fx-card);
+}
+
+.price-active--promo {
+  border-color: var(--fx-radical);
+  background: var(--fx-pink-wash);
+}
+
+.price-active--list {
+  border-color: var(--fx-ink-soft);
+}
+
+.price-active__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fx-ink-soft);
+  margin-bottom: 6px;
+}
+
+.price-active__amount {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--fx-ink);
+}
+
+.price-active--promo .price-active__amount {
+  color: var(--fx-radical-deep);
+}
+
+.price-active__sub {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: var(--fx-ink-soft);
+}
+
 .price-strip {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  margin-top: 20px;
+  margin-top: 14px;
 }
 
 @media (max-width: 720px) {
@@ -938,6 +986,45 @@ a {
 
 .price-card.promo .amount {
   color: var(--fx-pink-soft);
+}
+
+.price-card--selected {
+  outline: 2px solid var(--fx-radical);
+  outline-offset: 2px;
+}
+
+.price-card.promo.price-card--selected {
+  outline-color: #fff;
+}
+
+.price-card--muted {
+  opacity: 0.55;
+}
+
+.price-card--muted .amount {
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 255, 255, 0.45);
+}
+
+.price-card--muted.promo {
+  opacity: 0.72;
+}
+
+.metric-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(20, 20, 20, 0.08);
+  color: var(--fx-ink-soft);
+}
+
+.metric.highlight .metric-tag {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .note {

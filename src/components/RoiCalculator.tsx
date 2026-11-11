@@ -261,8 +261,30 @@ export function RoiCalculator() {
         </table>
       </div>
 
+      <div
+        className={`price-active${blackFriday ? " price-active--promo" : " price-active--list"}`}
+      >
+        <div className="price-active__label">
+          {blackFriday
+            ? `Active price (Black Friday −${BLACK_FRIDAY_PCT}% · used in ROI)`
+            : "Active price (list · used in ROI)"}
+        </div>
+        <p className="price-active__amount">
+          {formatUsdPrecise(blackFriday ? quote.promoMonthly : quote.listMonthly)}
+        </p>
+        <p className="price-active__sub">
+          per month ·{" "}
+          {formatUsdPrecise(
+            blackFriday ? quote.annualPromo : quote.annualList,
+          )}{" "}
+          / year
+        </p>
+      </div>
+
       <div className="price-strip">
-        <div className="price-card">
+        <div
+          className={`price-card${!blackFriday ? " price-card--selected" : ""}`}
+        >
           <div className="eyebrow">List price</div>
           <p className="amount">{formatUsdPrecise(quote.listMonthly)}</p>
           <p className="sub">
@@ -271,13 +293,21 @@ export function RoiCalculator() {
             ~{formatUsdPrecise(quote.perSeatEffective)} effective / seat
           </p>
         </div>
-        <div className="price-card promo">
+        <div
+          className={`price-card promo${blackFriday ? " price-card--selected" : " price-card--muted"}`}
+        >
           <div className="eyebrow">Black Friday (−{BLACK_FRIDAY_PCT}%)</div>
           <p className="amount">{formatUsdPrecise(quote.promoMonthly)}</p>
           <p className="sub">
-            per month · {formatUsdPrecise(quote.annualPromo)} / year
-            <br />
-            You save {formatUsdPrecise(quote.annualSavings)} / year vs list
+            {blackFriday ? (
+              <>
+                per month · {formatUsdPrecise(quote.annualPromo)} / year
+                <br />
+                You save {formatUsdPrecise(quote.annualSavings)} / year vs list
+              </>
+            ) : (
+              <>Turn on the toggle above to apply this price in ROI.</>
+            )}
           </p>
         </div>
       </div>
@@ -435,7 +465,13 @@ export function RoiCalculator() {
         </div>
       </div>
 
-      <PaybackMetrics impl={impl} setImpl={setImpl} result={result} />
+      <PaybackMetrics
+        impl={impl}
+        setImpl={setImpl}
+        result={result}
+        blackFriday={blackFriday}
+        activeMonthly={quote.monthlyCost}
+      />
 
       <div className="note">
         <strong>Active scenario:</strong>{" "}
@@ -481,10 +517,14 @@ function PaybackMetrics({
   impl,
   setImpl,
   result,
+  blackFriday,
+  activeMonthly,
 }: {
   impl: number;
   setImpl: (n: number) => void;
   result: ReturnType<typeof calculateRoi>;
+  blackFriday: boolean;
+  activeMonthly: number;
 }) {
   return (
     <>
@@ -507,8 +547,13 @@ function PaybackMetrics({
 
       <div className="metrics">
         <div className="metric">
-          <div className="label">Monthly software</div>
-          <div className="value">{formatUsdPrecise(result.monthlyCost)}</div>
+          <div className="label">
+            Monthly software
+            <span className="metric-tag">
+              {blackFriday ? "Black Friday" : "List"}
+            </span>
+          </div>
+          <div className="value">{formatUsdPrecise(activeMonthly)}</div>
         </div>
         <div className="metric">
           <div className="label">Recoverable / month</div>
