@@ -227,27 +227,6 @@ export default function App() {
         </ol>
       </section>
 
-      <section className="cta" id="cta">
-        <img
-          className="cta-factorial-logo"
-          src={CLIENT.factorialLogoPath}
-          alt="Factorial"
-        />
-        <h2>Ready when you are</h2>
-        <p>
-          Stress-test the numbers above, compare list vs Black Friday, and tell
-          us which path you want to move forward with.
-        </p>
-        <div className="cta-actions">
-          <a className="btn btn-primary" href="#roi">
-            Review the ROI numbers
-          </a>
-          <a className="btn btn-ghost" href="#solution">
-            Review the solution
-          </a>
-        </div>
-      </section>
-
       <footer className="footer">
         <img
           className="footer-factorial-logo"
