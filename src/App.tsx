@@ -7,7 +7,9 @@ import {
   SOLUTION_PILLARS,
   STACK_TODAY,
 } from "./data/roiAssumptions";
+import { ModuleShowcase } from "./components/ModuleShowcase";
 import { RoiCalculator } from "./components/RoiCalculator";
+import { ScrollNav } from "./components/ScrollNav";
 
 function statusClass(status: string): string {
   return `tag ${status.toLowerCase()}`;
@@ -16,49 +18,8 @@ function statusClass(status: string): string {
 export default function App() {
   return (
     <div className="page">
-      <nav className="nav">
-        <div className="nav-brand">
-          <img
-            className="nav-factorial-logo"
-            src={CLIENT.factorialLogoPath}
-            alt="Factorial"
-          />
-          <span className="nav-divider" aria-hidden="true" />
-          <span className="nav-client">
-            <img src={CLIENT.logoPath} alt="" />
-            Prepared for {CLIENT.name}
-          </span>
-        </div>
-        <div className="nav-links">
-          <a href="#needs">Needs</a>
-          <a href="#stack">Today</a>
-          <a href="#solution">Solution</a>
-          <a href="#roi">Investment</a>
-          <a href="#next">Next</a>
-        </div>
-      </nav>
-
-      <header className="hero">
-        <img
-          className="hero-factorial-logo"
-          src={CLIENT.factorialLogoPath}
-          alt="Factorial"
-        />
-        <div className="hero-kicker">Investment & ROI proposal</div>
-        <h1>One platform to retire the paperwork chase</h1>
-        <p className="hero-lead">
-          Based on what your team shared: documents and filing cabinets are the
-          bottleneck — while time already runs in TCP. Factorial connects
-          documents, onboarding, time, training, and performance for ~{CLIENT.headcount}{" "}
-          people in {CLIENT.market}.
-        </p>
-        <div className="hero-meta">
-          <span className="chip client">{CLIENT.name}</span>
-          <span className="chip">~{CLIENT.headcount} employees</span>
-          <span className="chip">{CLIENT.market}</span>
-          <span className="chip">Black Friday −30%</span>
-        </div>
-      </header>
+      <ScrollNav />
+      <ModuleShowcase />
 
       <section className="section" id="needs">
         <div className="section-head">
@@ -68,7 +29,7 @@ export default function App() {
             pains — not a generic HR checklist.
           </p>
         </div>
-        <div className="grid-2">
+        <div className="grid-2 pain-rail">
           {PAINS.map((pain) => (
             <article className="card pain-card" key={pain.title}>
               <span className="tag">From your call</span>
