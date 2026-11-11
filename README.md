@@ -80,8 +80,18 @@ https://victorhgutierrez-cloud.github.io/securityassociatesbermuda/
 
 Como funciona:
 1. Fazes push para a branch `main`
-2. O workflow **Deploy to GitHub Pages** faz `npm run build` e publica a pasta `dist` na branch `gh-pages`
-3. O GitHub Pages serve a branch `gh-pages`
+2. O workflow **Deploy to GitHub Pages** faz `npm run build` e publica via **GitHub Actions** (artifact oficial)
+3. Em **Settings → Pages** do repositório, a fonte tem de ser **GitHub Actions** (não a branch `gh-pages`)
+
+### Se vires vermelho em “pages build and deployment”
+
+Isso costuma aparecer quando o Pages estava em **branch `gh-pages`** e ao mesmo tempo havia push para essa branch (método antigo). O passo **deploy** dá *Timeout reached, aborting!* — mas o site **Deploy to GitHub Pages** pode estar OK.
+
+**Corrigir (no GitHub, no browser):**
+1. Abre https://github.com/VictorHGutierrez-cloud/securityassociatesbermuda/settings/pages
+2. Em **Build and deployment → Source**, escolhe **GitHub Actions**
+3. Guarda. Faz um push qualquer à `main` (ou corre o workflow manualmente em **Actions**)
+4. (Opcional) **Settings → Environments → github-pages** — se houver “Required reviewers”, remove ou aprova o deploy, senão o deploy também pode expirar
 
 ### Build local com o mesmo base path do Pages
 
