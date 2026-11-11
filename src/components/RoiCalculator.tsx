@@ -115,24 +115,20 @@ export function RoiCalculator() {
 
   return (
     <div className="calc-shell">
-      <div className="calc-top">
-        <div>
-          <h3 style={{ margin: "0 0 6px" }}>Package &amp; ROI calculator</h3>
-          <p style={{ margin: 0, color: "var(--fx-ink-soft)", fontSize: "0.92rem" }}>
-            Enterprise Monthly only. Tune seats and LMS, then pick a waste scenario
-            or adjust each line — ROI uses labor hours + print/storage costs.
-          </p>
-        </div>
-        <label className={`toggle${blackFriday ? " on" : ""}`}>
-          <input
-            type="checkbox"
-            checked={blackFriday}
-            onChange={(e) => setBlackFriday(e.target.checked)}
-          />
-          Black Friday −{BLACK_FRIDAY_PCT}%
-        </label>
-      </div>
+      <RoiSignature
+        blackFriday={blackFriday}
+        setBlackFriday={setBlackFriday}
+        customized={customized}
+        scenarioId={scenarioId}
+        applyScenario={applyScenario}
+        activeScenario={activeScenario}
+        waste={waste}
+        result={result}
+        quote={quote}
+      />
 
+      <details className="calc-fold">
+        <summary>Customize package (seats, LMS, add-ons)</summary>
       <div className="package-block">
         <div className="package-locked">
           <div className="package-locked-top">
@@ -311,35 +307,14 @@ export function RoiCalculator() {
           </p>
         </div>
       </div>
+      </details>
 
-      <hr className="calc-divider" />
+      <details className="calc-fold">
+        <summary>Adjust waste assumptions (optional detail)</summary>
 
-      <div className="waste-head">
-        <div>
-          <h3 style={{ margin: "0 0 6px" }}>Where HR time and money leak today</h3>
-          <p className="waste-context">{wasteContextLine()}</p>
-        </div>
-        <div className="scenario-row" role="group" aria-label="ROI scenarios">
-          {ROI_SCENARIOS.map((sc) => (
-            <button
-              key={sc.id}
-              type="button"
-              className={`scenario-chip${
-                !customized && scenarioId === sc.id ? " is-active" : ""
-              }`}
-              onClick={() => applyScenario(sc.id)}
-            >
-              {sc.label}
-            </button>
-          ))}
-          {customized ? (
-            <span className="scenario-custom">Custom mix</span>
-          ) : null}
-        </div>
-      </div>
-      {activeScenario && !customized ? (
-        <p className="waste-scenario-desc">{activeScenario.description}</p>
-      ) : null}
+      <p className="waste-context" style={{ marginTop: 0 }}>
+        {wasteContextLine()}
+      </p>
 
       <div className="control" style={{ marginBottom: 16 }}>
         <label>
@@ -465,26 +440,19 @@ export function RoiCalculator() {
         </div>
       </div>
 
-      <PaybackMetrics
-        impl={impl}
-        setImpl={setImpl}
-        result={result}
-        blackFriday={blackFriday}
-        activeMonthly={quote.monthlyCost}
-      />
-
-      <div className="note">
-        <strong>Active scenario:</strong>{" "}
-        {customized ? "Custom" : activeScenario?.label ?? "—"}
-        {" · "}
-        {quote.seats} seats ·{" "}
-        {blackFriday
-          ? `promo ${formatUsdPrecise(result.monthlyCost)}/mo software`
-          : `list ${formatUsdPrecise(result.monthlyCost)}/mo software`}
-        {" · "}
-        recoverable {formatUsdPrecise(waste.benefitMonthly)}/mo vs cost{" "}
-        {formatUsdPrecise(result.monthlyCost)}/mo · net year 1{" "}
-        {formatUsdPrecise(result.netAnnual)}
+      <div className="control" style={{ marginBottom: 16 }}>
+        <label>
+          <span>One-shot implementation (USD)</span>
+          <span>{formatUsd(impl)}</span>
+        </label>
+        <input
+          type="range"
+          min={0}
+          max={10000}
+          step={500}
+          value={impl}
+          onChange={(e) => setImpl(Number(e.target.value))}
+        />
       </div>
 
       <table className="breakdown">
@@ -509,43 +477,71 @@ export function RoiCalculator() {
             ))}
         </tbody>
       </table>
+      </details>
     </div>
   );
 }
 
-function PaybackMetrics({
-  impl,
-  setImpl,
-  result,
-  blackFriday,
-  activeMonthly,
-}: {
-  impl: number;
-  setImpl: (n: number) => void;
-  result: ReturnType<typeof calculateRoi>;
-  blackFriday: boolean;
-  activeMonthly: number;
-}) {
-  return (
-    <>
-      <h3 style={{ margin: "24px 0 12px" }}>Payback vs package</h3>
-      <div className="control" style={{ marginBottom: 16 }}>
-        <label>
-          <span>One-shot implementation (USD)</span>
-          <span>{formatUsd(impl)}</span>
-        </label>
-        <input
-          type="range"
-          min={0}
-          max={10000}
-          step={500}
-          value={impl}
-          onChange={(e) => setImpl(Number(e.target.value))}
-        />
-        <div className="hint">Leave at $0 if implementation is included in the deal.</div>
-      </div>
+type WasteTotals = ReturnType<typeof calculateWasteTotals>;
+type QuoteResult = ReturnType<typeof calculateQuote>;
+type RoiResult = ReturnType<typeof calculateRoi>;
 
-      <div className="metrics">
+function RoiSignature({
+  blackFriday,
+  setBlackFriday,
+  customized,
+  scenarioId,
+  applyScenario,
+  activeScenario,
+  waste,
+  result,
+  quote,
+}: {
+  blackFriday: boolean;
+  setBlackFriday: (v: boolean) => void;
+  customized: boolean;
+  scenarioId: RoiScenarioId;
+  applyScenario: (id: RoiScenarioId) => void;
+  activeScenario: (typeof ROI_SCENARIOS)[number] | undefined;
+  waste: WasteTotals;
+  result: RoiResult;
+  quote: QuoteResult;
+}) {
+  const activeMonthly = quote.monthlyCost;
+
+  return (
+    <div className="calc-signature" aria-live="polite">
+      <div className="calc-signature__toolbar">
+        <div className="scenario-row" role="group" aria-label="ROI scenarios">
+          {ROI_SCENARIOS.map((sc) => (
+            <button
+              key={sc.id}
+              type="button"
+              className={`scenario-chip${
+                !customized && scenarioId === sc.id ? " is-active" : ""
+              }`}
+              onClick={() => applyScenario(sc.id)}
+            >
+              {sc.label}
+            </button>
+          ))}
+          {customized ? (
+            <span className="scenario-custom">Custom</span>
+          ) : null}
+        </div>
+        <label className={`toggle${blackFriday ? " on" : ""}`}>
+          <input
+            type="checkbox"
+            checked={blackFriday}
+            onChange={(e) => setBlackFriday(e.target.checked)}
+          />
+          Black Friday −{BLACK_FRIDAY_PCT}%
+        </label>
+      </div>
+      {activeScenario && !customized ? (
+        <p className="calc-signature__desc">{activeScenario.description}</p>
+      ) : null}
+      <div className="metrics metrics--signature">
         <div className="metric">
           <div className="label">
             Monthly software
@@ -558,18 +554,19 @@ function PaybackMetrics({
         <div className="metric">
           <div className="label">Recoverable / month</div>
           <div className="value">{formatUsd(result.benefitMonthly)}</div>
+          <div className="metric-sub">
+            {waste.totalHours} h · net yr 1 {formatUsdPrecise(result.netAnnual)}
+          </div>
+        </div>
+        <div className="metric highlight">
+          <div className="label">Payback</div>
+          <div className="value">{formatMonths(result.paybackMonths)}</div>
         </div>
         <div className="metric highlight">
           <div className="label">ROI year 1</div>
           <div className="value">{formatPct(result.roiPct)}</div>
         </div>
-        <div className="metric highlight">
-          <div className="label">Payback</div>
-          <div className="value" style={{ fontSize: "1.45rem" }}>
-            {formatMonths(result.paybackMonths)}
-          </div>
-        </div>
       </div>
-    </>
+    </div>
   );
 }

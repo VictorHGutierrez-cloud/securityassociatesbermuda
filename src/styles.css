@@ -50,7 +50,7 @@ a {
 }
 
 .page {
-  max-width: 1040px;
+  max-width: 920px;
   margin: 0 auto;
   padding: 20px 20px 72px;
 }
@@ -225,7 +225,7 @@ a {
 }
 
 .section {
-  margin-bottom: 44px;
+  margin-bottom: 40px;
 }
 
 .section-head {

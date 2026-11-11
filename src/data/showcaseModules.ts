@@ -59,10 +59,9 @@ export const SHOWCASE_MODULES: readonly ShowcaseModule[] = [
 ] as const;
 
 export const NAV_SECTIONS = [
-  { id: "showcase", label: "Overview" },
-  { id: "needs", label: "Needs" },
-  { id: "stack", label: "Today" },
-  { id: "solution", label: "Solution" },
+  { id: "showcase", label: "Solution" },
+  { id: "needs", label: "Problem" },
+  { id: "stack", label: "Gaps" },
   { id: "roi", label: "Investment" },
   { id: "objections", label: "FAQ" },
 ] as const;
